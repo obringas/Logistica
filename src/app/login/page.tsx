@@ -5,6 +5,7 @@ import { login } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
 import {getGlobalUser} from "@/utils/globalState";
 import { utils } from "xlsx";
+import { getUsers } from '@/utils/userStorage'; // ✅ Ruta al helper
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ export default function LoginPage() {
  
   const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleLogin1 = async () => {
     setLoading(true);
     setError("");
 
@@ -29,6 +30,20 @@ export default function LoginPage() {
       setError("Usuario o contraseña incorrectos");
     }
   };
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    const user = getUsers().find(
+      (u) => u.username === username && u.password === password && u.active
+    );
+
+    if (user) {
+      localStorage.setItem('authUser', JSON.stringify(user));
+      router.push("/dashboard");
+    } else {
+      alert('Credenciales incorrectas o usuario inactivo');
+    }
+  };
+
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
