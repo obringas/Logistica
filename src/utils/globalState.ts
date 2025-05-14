@@ -17,7 +17,7 @@ export interface UserGlobal {
      applicationName?: string;
   }
   // Estado global del usuario
-  export let globalUser: User | null = null;
+  
   
   // Función para establecer el usuario global
   export function setGlobalUser(user: any) {
@@ -32,3 +32,16 @@ export interface UserGlobal {
   export function clearGlobalUser() {
     globalUser = null;
   }
+  function parseCookie(): any | null {
+  const raw = document.cookie.split(";").find(c => c.trim().startsWith("auth_token="));
+  if (!raw) return null;
+
+  try {
+    const base64 = raw.split("=")[1];
+    return JSON.parse(atob(base64));
+  } catch {
+    return null;
+  }
+}
+
+export let globalUser: User | null = parseCookie();

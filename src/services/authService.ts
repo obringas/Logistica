@@ -114,3 +114,27 @@ export function updateUserData(id: number, newUsername: string, newPassword: str
     setGlobalUser(newUserData);
   }
 }
+export function loginLocal(username: string, password: string): boolean {
+  const user = getUsers().find(
+    (u) => u.username === username && u.password === password && u.active
+  );
+
+  if (user) {
+    const userData = {
+      userId: user.id,
+      userName: user.username,
+     // email: user.email || "",
+      role: user.role,
+      applicationName: "Local",
+    };
+
+    // Guardar en cookie (1h)
+    document.cookie = `auth_token=${btoa(JSON.stringify(userData))}; path=/; max-age=3600`;
+    localStorage.setItem("authUser", JSON.stringify(userData));
+    setGlobalUser(userData);
+
+    return true;
+  }
+
+  return false;
+}

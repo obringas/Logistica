@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-//import { login } from "@/services/authService";
+import { loginLocal } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
 import {getGlobalUser} from "@/utils/globalState";
 import { utils } from "xlsx";
@@ -32,20 +32,16 @@ export default function LoginPage() {
     }
   };
   */
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const user = getUsers().find(
-      (u) => u.username === username && u.password === password && u.active
-    );
-    
-    if (user) {
-      setGlobalUser(user);
-      localStorage.setItem('authUser', JSON.stringify(user));
-      router.push("/dashboard");
-    } else {
-      alert('Credenciales incorrectas o usuario inactivo');
-    }
-  };
+
+const handleLogin = (e: React.FormEvent) => {
+  e.preventDefault();
+  const success = loginLocal(username, password);
+  if (success) {
+    router.push("/dashboard");
+  } else {
+    alert("Credenciales incorrectas o usuario inactivo");
+  }
+};
 
 
   return (
