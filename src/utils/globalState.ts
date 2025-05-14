@@ -1,5 +1,5 @@
 // Definimos la interfaz para el usuario global
-export interface User {
+export interface UserGlobal {
     userId: number;
     userName: string;
     email: string;
@@ -7,12 +7,20 @@ export interface User {
     token: string;
     applicationName?: string;
   }
-  
+  export interface User {
+    id: number;
+    username: string;
+    password: string;
+    role: 'admin' | 'user';
+    active: boolean;
+    email: string;
+     applicationName?: string;
+  }
   // Estado global del usuario
   export let globalUser: User | null = null;
   
   // Función para establecer el usuario global
-  export function setGlobalUser(user: User) {
+  export function setGlobalUser(user: any) {
     globalUser = user;
   }
   

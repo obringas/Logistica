@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/services/authService";
+//import { login } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
 import {getGlobalUser} from "@/utils/globalState";
 import { utils } from "xlsx";
 import { getUsers } from '@/utils/userStorage'; // ✅ Ruta al helper
-
+import {  setGlobalUser,clearGlobalUser } from "@/utils/globalState";
+import { data } from "autoprefixer";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +15,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
  
   const router = useRouter();
-
+/*
   const handleLogin1 = async () => {
     setLoading(true);
     setError("");
@@ -30,13 +31,15 @@ export default function LoginPage() {
       setError("Usuario o contraseña incorrectos");
     }
   };
+  */
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     const user = getUsers().find(
       (u) => u.username === username && u.password === password && u.active
     );
-
+    
     if (user) {
+      setGlobalUser(user);
       localStorage.setItem('authUser', JSON.stringify(user));
       router.push("/dashboard");
     } else {

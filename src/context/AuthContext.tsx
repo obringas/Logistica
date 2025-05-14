@@ -48,7 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
     setUser(null);
     clearGlobalUser(); // ✅ Limpiar la variable global
-    window.location.href = "StockLogistica/login";
+    window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/login`;
+;
   };
 
   return (

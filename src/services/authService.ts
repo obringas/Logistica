@@ -1,5 +1,7 @@
 import CryptoJS from "crypto-js";
 import {  setGlobalUser,clearGlobalUser } from "@/utils/globalState";
+import { getUsers, saveUsers } from "@/utils/userStorage";
+
 
 const API_URL1 = process.env.NEXT_PUBLIC_API_URL ;
 const API_URL2="/api/proxy";
@@ -68,14 +70,14 @@ export const login = async (username: string, password: string): Promise<boolean
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   const fakeUser = {
-    userId: 1,
-    userName: username,
+    id: 1,
+    username: username,
     email: `${username}@coprotab.com`,
     role: "admin",
     token: "fake-token",
     applicationName: "StockLogistica",
   };
-
+  
   // Guardar en localStorage/sessionStorage
   sessionStorage.setItem("user", JSON.stringify(fakeUser));
   localStorage.setItem("user", JSON.stringify(fakeUser));
@@ -88,4 +90,27 @@ export function logout() {
   sessionStorage.removeItem("user");
   localStorage.removeItem("user");
   clearGlobalUser(); // Limpiar la variable global
+  window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/login`;
+}
+export function updateUserData(id: number, newUsername: string, newPassword: string) {
+  const users = getUsers();
+  const updatedUsers = users.map((u) =>
+    u.id === id ? { ...u, username: newUsername, password: newPassword } : u
+  );
+  saveUsers(updatedUsers);
+
+  // Actualizar también el authUser en localStorage
+  const updatedUser = updatedUsers.find((u) => u.id === id);
+  if (updatedUser) {
+    const newUserData = {
+      userId: updatedUser.id,
+      userName: updatedUser.username,
+     // email: updatedUser.email || '',
+      role: updatedUser.role,
+      token: '',
+      applicationName: 'Local',
+    };
+    localStorage.setItem("authUser", JSON.stringify(newUserData));
+    setGlobalUser(newUserData);
+  }
 }
