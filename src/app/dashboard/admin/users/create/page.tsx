@@ -1,36 +1,107 @@
-'use client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { getUsers, saveUsers } from '@/utils/userStorage'
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { getUsers, saveUsers } from "@/utils/userStorage";
+import { User } from "@/utils/users";
 
 export default function CreateUserPage() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<'admin' | 'user'>('user')
-  const router = useRouter()
+  const router = useRouter();
+  const [form, setForm] = useState<Omit<User, "id">>({
+    username: "",
+    password: "",
+    role: "user",
+    active: true,
+    email: "",
+    applicationName: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setForm((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleCreate = () => {
-    if (!username || !password) return alert('Faltan datos')
-
-    const users = getUsers()
-    const id = Math.max(...users.map(u => u.id)) + 1
-    const newUser = { id, username, password, role, active: true }
-    saveUsers([...users, newUser])
-    router.push('/dashboard/admin/users')
-  }
+    const users = getUsers();
+    const newUser: User = {
+      id: users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1,
+      ...form,
+    };
+    saveUsers([...users, newUser]);
+    router.push("/dashboard/admin/users");
+  };
 
   return (
-    <div className="p-6 max-w-xl">
-      <h2 className="text-xl font-bold mb-4">Nuevo Usuario</h2>
-      <input className="border mb-2 w-full p-2" placeholder="Usuario" value={username} onChange={e => setUsername(e.target.value)} />
-      <input className="border mb-2 w-full p-2" type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} />
-      <select className="border mb-4 w-full p-2" value={role} onChange={e => setRole(e.target.value as any)}>
+    <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded">
+      <h2 className="text-xl font-bold mb-4">Crear Nuevo Usuario</h2>
+
+      <label className="block mb-2 text-sm font-medium">Usuario</label>
+      <input
+        name="username"
+        value={form.username}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 mb-4"
+      />
+
+      <label className="block mb-2 text-sm font-medium">Contraseña</label>
+      <input
+        name="password"
+        type="password"
+        value={form.password}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 mb-4"
+      />
+
+      <label className="block mb-2 text-sm font-medium">Rol</label>
+      <select
+        name="role"
+        value={form.role}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 mb-4"
+      >
+        <option value="admin">Admin</option>
         <option value="user">Usuario</option>
-        <option value="admin">Administrador</option>
       </select>
-      <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={handleCreate}>
-        Crear
+
+      <label className="block mb-2 text-sm font-medium">Email</label>
+      <input
+        name="email"
+        type="email"
+        value={form.email}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 mb-4"
+      />
+
+      <label className="block mb-2 text-sm font-medium">Aplicación</label>
+      <input
+        name="applicationName"
+        value={form.applicationName}
+        onChange={handleChange}
+        className="w-full border rounded px-3 py-2 mb-4"
+      />
+
+      <label className="flex items-center mb-4">
+        <input
+          type="checkbox"
+          name="active"
+          checked={form.active}
+          onChange={handleChange}
+          className="mr-2"
+        />
+        Usuario activo
+      </label>
+
+      <button
+        onClick={handleCreate}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Crear Usuario
       </button>
     </div>
-  )
+  );
 }

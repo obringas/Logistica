@@ -1,27 +1,22 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginLocal } from "@/services/authService";
-import { useAuth } from "@/context/AuthContext";
-import {getGlobalUser} from "@/utils/globalState";
-import { utils } from "xlsx";
-import { getUsers } from '@/utils/userStorage'; // ✅ Ruta al helper
-import {  setGlobalUser,clearGlobalUser } from "@/utils/globalState";
-import { data } from "autoprefixer";
+import { login } from "@/services/authService";
+import { getGlobalUser } from "@/utils/globalState";
+
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
- 
   const router = useRouter();
-/*
-  const handleLogin1 = async () => {
+
+  const handleLogin = async () => {
     setLoading(true);
     setError("");
 
-    const success = await login(username, password); // ✅ Pasamos setUser
-
+    const success = await login(username, password);
     setLoading(false);
 
     if (success) {
@@ -31,46 +26,40 @@ export default function LoginPage() {
       setError("Usuario o contraseña incorrectos");
     }
   };
-  */
-
-const handleLogin = (e: React.FormEvent) => {
-  e.preventDefault();
-  const success = loginLocal(username, password);
-  if (success) {
-    router.push("/dashboard");
-  } else {
-    alert("Credenciales incorrectas o usuario inactivo");
-  }
-};
-
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-80">
-        <h1 className="text-xl font-bold mb-4">Iniciar Sesión</h1>
-        {error && <p className="text-red-500">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-white">
+      <div className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-2xl font-bold text-center mb-4 text-blue-800">Ingreso al sistema</h1>
+
+        {error && <div className="text-red-600 mb-3 text-sm text-center">{error}</div>}
+
+        <label className="block text-sm font-medium mb-1 text-gray-700">Usuario</label>
         <input
           type="text"
-          placeholder="Usuario"
-          className="w-full p-2 border rounded mb-2"
+          className="w-full border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           disabled={loading}
         />
+
+        <label className="block text-sm font-medium mb-1 text-gray-700">Contraseña</label>
         <input
           type="password"
-          placeholder="Contraseña"
-          className="w-full p-2 border rounded mb-2"
+          className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
         />
+
         <button
-          className={`w-full p-2 rounded ${loading ? "bg-gray-500" : "bg-blue-500 text-white"}`}
+          className={`w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           onClick={handleLogin}
           disabled={loading}
         >
-          {loading ? "Espere..." : "Ingresar"}
+          {loading ? "Ingresando..." : "Ingresar"}
         </button>
       </div>
     </div>
