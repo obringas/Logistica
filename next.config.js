@@ -4,8 +4,9 @@
 const isDev = process.env.NODE_ENV === 'development';
 //const isDev=true;
 // Cargamos basePath y API URL desde variables de entorno
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+//const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
+const basePath = '/StockLogistica'
 
 const nextConfig = {
   // Solo hacemos 'export' en producción
