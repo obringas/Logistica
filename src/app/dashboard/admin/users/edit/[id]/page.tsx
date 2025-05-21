@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams,useParams  } from "next/navigation";
 import { getUsers, saveUsers } from "@/utils/userStorage";
 import { User } from "@/utils/users";
 
 export default function EditUserPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const id = Number(searchParams.get("id"));
-
+  //const searchParams = useSearchParams();
+  //const id = Number(searchParams.get("id"));
+  const params = useParams();
+  const id = Number(params.id);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {

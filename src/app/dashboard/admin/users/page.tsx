@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUsers, saveUsers } from '@/utils/userStorage';
 import { User } from '@/utils/users';
+import { useParams } from 'next/navigation';
+
 
 export default function UserAdminPage() {
   const [users, setUsers] = useState<User[]>([]);
