@@ -1,49 +1,62 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams,useParams  } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { getUsers, saveUsers } from "@/utils/userStorage";
 import { User } from "@/utils/users";
+import { useAuth } from "@/context/AuthContext";
+import { usePermission } from "@/hooks/usePermission";
 
 export default function EditUserPage() {
   const router = useRouter();
-  //const searchParams = useSearchParams();
-  //const id = Number(searchParams.get("id"));
   const params = useParams();
-  const id = Number(params.id);
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
+  const { hasPermission } = usePermission();
+
+  const userId = Number(params.id);
+  const [targetUser, setTargetUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const users = getUsers();
-    const existingUser = users.find((u) => u.id === id);
-    if (existingUser) {
-      setUser(existingUser);
-    } else {
-      router.push("/dashboard/admin/users");
+    if (!user) {
+      router.push("/login");
+      return;
     }
-  }, [id, router]);
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  const { name, value, type } = e.target;
+    const canEditAny = hasPermission("canEditUsers");
+    const isEditingOwnAccount = user.userId === userId;
 
-  if (type === "checkbox") {
-    const checked = (e.target as HTMLInputElement).checked;
-    setUser((prev) => (prev ? { ...prev, [name]: checked } : null));
-  } else {
-    setUser((prev) => (prev ? { ...prev, [name]: value } : null));
-  }
-};
+    if (!canEditAny && !isEditingOwnAccount) {
+      router.push("/dashboard");
+      return;
+    }
 
+    const users = getUsers();
+    const found = users.find((u) => u.id === userId);
+    if (!found) {
+      router.push("/dashboard/admin/users");
+    } else {
+      setTargetUser(found);
+    }
+  }, [user]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+
+    setTargetUser((prev) =>
+      prev ? { ...prev, [name]: type === "checkbox" ? checked : value } : null
+    );
+  };
 
   const handleSave = () => {
-    if (!user) return;
+    if (!targetUser) return;
     const users = getUsers();
-    const updated = users.map((u) => (u.id === id ? user : u));
+    const updated = users.map((u) => (u.id === userId ? targetUser : u));
     saveUsers(updated);
     router.push("/dashboard/admin/users");
   };
 
-  if (!user) return <p className="p-4">Cargando usuario...</p>;
+  if (!targetUser) return <p className="p-4">Cargando usuario...</p>;
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded">
@@ -52,7 +65,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
       <label className="block mb-2 text-sm font-medium">Usuario</label>
       <input
         name="username"
-        value={user.username}
+        value={targetUser.username}
         onChange={handleChange}
         className="w-full border rounded px-3 py-2 mb-4"
       />
@@ -61,49 +74,57 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
       <input
         name="password"
         type="password"
-        value={user.password}
+        value={targetUser.password}
         onChange={handleChange}
         className="w-full border rounded px-3 py-2 mb-4"
       />
 
-      <label className="block mb-2 text-sm font-medium">Rol</label>
-      <select
-        name="role"
-        value={user.role}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 mb-4"
-      >
-        <option value="admin">Admin</option>
-        <option value="user">Usuario</option>
-      </select>
+      {user?.role === "admin" && (
+        <>
+          <label className="block mb-2 text-sm font-medium">Rol</label>
+          <select
+            name="role"
+            value={targetUser.role}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2 mb-4"
+          >
+            <option value="admin">Admin</option>
+            <option value="user">Usuario</option>
+          </select>
+        </>
+      )}
 
       <label className="block mb-2 text-sm font-medium">Email</label>
       <input
         name="email"
         type="email"
-        value={user.email ?? ""}
+        value={targetUser.email ?? ""}
         onChange={handleChange}
         className="w-full border rounded px-3 py-2 mb-4"
       />
 
-      <label className="block mb-2 text-sm font-medium">Aplicación</label>
-      <input
-        name="applicationName"
-        value={user.applicationName ?? ""}
-        onChange={handleChange}
-        className="w-full border rounded px-3 py-2 mb-4"
-      />
+      {user?.role === "admin" && (
+        <>
+          <label className="block mb-2 text-sm font-medium">Aplicación</label>
+          <input
+            name="applicationName"
+            value={targetUser.applicationName ?? ""}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2 mb-4"
+          />
 
-      <label className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          name="active"
-          checked={user.active}
-          onChange={handleChange}
-          className="mr-2"
-        />
-        Usuario activo
-      </label>
+          <label className="flex items-center mb-4">
+            <input
+              type="checkbox"
+              name="active"
+              checked={targetUser.active}
+              onChange={handleChange}
+              className="mr-2"
+            />
+            Usuario activo
+          </label>
+        </>
+      )}
 
       <button
         onClick={handleSave}

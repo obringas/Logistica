@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUsers, saveUsers } from "@/utils/userStorage";
 import { User } from "@/utils/users";
+import { useEffect } from "react";
+import { usePermission } from "@/hooks/usePermission";
+import { useAuth } from "@/context/AuthContext";
+
 
 export default function CreateUserPage() {
   const router = useRouter();
@@ -15,6 +19,20 @@ export default function CreateUserPage() {
     email: "",
     applicationName: "",
   });
+  
+  const { user } = useAuth();
+  const { hasPermission } = usePermission();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (!hasPermission("canCreateUsers")) {
+      router.push("/dashboard");
+    }
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;

@@ -15,3 +15,4 @@ export interface User {
     { id: 2, username: 'juan', password: 'juan123', role: 'user', active: true, email: '', applicationName: 'StockLogistica' },
   ];
   
+  
