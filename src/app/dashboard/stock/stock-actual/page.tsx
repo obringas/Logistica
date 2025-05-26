@@ -1,79 +1,32 @@
+// app/dashboard/stock/stock-actual/page.tsx
 "use client";
 
 import { useState } from "react";
-import Filtros from "@/components/stock/stock-actual/Filtros";
-import ResultadoTabla from "@/components/stock/stock-actual/ResultadoTabla";
-import DetalleTabla from "@/components/stock/stock-actual/DetalleTabla";
+import { FiltrosStock } from "@/components/stock/stock-actual/FiltrosStock";
+import { ResultadoStock } from "@/components/stock/stock-actual/ResultadoStock";
+import { StockFilters, useStockData } from "@/hooks/useStockData";
 
-const mockResultados = [
-  {
-    id: 1,
-    producto: "Tabaco",
-    galpon: "Galpón 1",
-    estiba: "E1",
-    grado: "A",
-    kilos: 1230,
-    cajas: 10,
-  },
-  {
-    id: 2,
-    producto: "Tabaco",
-    galpon: "Galpón 2",
-    estiba: "E2",
-    grado: "B",
-    kilos: 1560,
-    cajas: 12,
-  },
-];
+export default function StockActualPage() {
+  const [filters, setFilters] = useState<StockFilters>({
+    idAdministrador: 3,
+    idGrado: 0,
+    cajaDesde: 0,
+    cajaHasta: 0,
+    idGalpon: 0,
+    idEstiba: 0,
+    idProducto: 0,
+    codCampania: 2024,
+    nroCataBuscar: 0,
+  });
+  const [submittedFilters, setSubmittedFilters] = useState(filters);
 
-const mockDetalle = [
-  {
-    id: 1,
-    lote: "L-001",
-    fechaIngreso: "2024-01-15",
-    kilos: 600,
-    humedad: 12,
-    observaciones: "Sin observaciones",
-  },
-  {
-    id: 2,
-    lote: "L-002",
-    fechaIngreso: "2024-01-18",
-    kilos: 630,
-    humedad: 13,
-    observaciones: "Ligeramente húmedo",
-  },
-];
-
-export default function Page() {
-  const [resultados, setResultados] = useState(mockResultados);
-  const [detalleVisible, setDetalleVisible] = useState(false);
-  const [detalle, setDetalle] = useState(mockDetalle);
-
-  const handleBuscar = (filtros: any) => {
-    console.log("Buscar con filtros:", filtros);
-    setResultados(mockResultados);
-    setDetalleVisible(false);
-  };
-
-  const handleDetalleClick = (item: any) => {
-    console.log("Ver detalle de:", item);
-    setDetalle(mockDetalle); // luego: fetch de backend con item.id
-    setDetalleVisible(true);
-  };
-
-  const handleVolver = () => {
-    setDetalleVisible(false);
-  };
+  const { data: stock, loading } = useStockData(submittedFilters);
 
   return (
-    <div className="container mx-auto mt-4 p-4">
-      <h2 className="text-2xl font-bold mb-4">Consultar Stock </h2>
-      {!detalleVisible && <Filtros onBuscar={handleBuscar} />}
-      {!detalleVisible && (
-        <ResultadoTabla data={resultados} onDetalleClick={handleDetalleClick} />
-      )}
-      {detalleVisible && <DetalleTabla data={detalle} onVolver={handleVolver} />}
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Stock Actual</h1>
+      <FiltrosStock filters={filters} onChange={setFilters} onSubmit={() => setSubmittedFilters(filters)} loading={loading} />
+      <ResultadoStock data={stock} loading={loading} />
     </div>
   );
 }

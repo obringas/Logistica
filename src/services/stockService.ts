@@ -1,38 +1,51 @@
-const API_URL=process.env.NEXT_PUBLIC_API_URL ;
+export interface StockFilters {
+  idAdministrador: number;
+  idGrado: number;
+  cajaDesde: number;
+  cajaHasta: number;
+  idGalpon: number;
+  idEstiba: number;
+  idProducto: number;
+  codCampania: number;
+  nroCataBuscar: number;
+}
 
-export const getPropietarios = async () => {
-    const res = await fetch(`${API_URL}/stock/propietarios`);
-    if (!res.ok) throw new Error("Error al obtener propietarios");
-    return await res.json();
-  };
-  
-  export const getGrados = async () => {
-    const res = await fetch(`${API_URL}/stock/grados`);
-    if (!res.ok) throw new Error("Error al obtener grados");
-    return await res.json();
-  };
-  
-  export const getGalpones = async () => {
-    const res = await fetch(`${API_URL}/stock/galpones`);
-    if (!res.ok) throw new Error("Error al obtener galpones");
-    return await res.json();
-  };
-  
-  export const getEstibas = async () => {
-    const res = await fetch(`${API_URL}/stock/estibas`);
-    if (!res.ok) throw new Error("Error al obtener estibas");
-    return await res.json();
-  };
-  
-  export const getProductos = async () => {
-    const res = await fetch(`${API_URL}/stock/productos`);
-    if (!res.ok) throw new Error("Error al obtener productos");
-    return await res.json();
-  };
-  
-  export const getCampanias = async () => {
-    const res = await fetch(`${API_URL}//stock/campanias`);
-    if (!res.ok) throw new Error("Error al obtener campañas");
-    return await res.json();
-  };
-  
+export interface StockItem {
+  id_gradoMarca: number;
+  nombreGradoMarca: string;
+  cantidadCajas: number;
+  rangoCajas: string;
+  campania: number;
+  kilosTotales: number;
+  tara: number;
+  kilosTotalesSubConsulta: number;
+  taraTotal: number;
+  tipoProducto: string;
+  variedad: string;
+  nombreGalpon: string;
+  nombreEstiba: string;
+  nombreEstado: string;
+  propietarioNombre: string;
+  id_galpon: number;
+  id_estiba: number;
+  id_estado: number;
+  id_variedad: number;
+  id_producto: number;
+  id_propietario: number;
+  afectado_warrant: string;
+  kilosTotalesConsulta: number;
+}
+
+export async function fetchStock(filters: StockFilters): Promise<StockItem[]> {
+  const response = await fetch(process.env.NEXT_PUBLIC_API_STOCK_CONSULTA!, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(filters),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error al consultar el stock.");
+  }
+
+  return await response.json();
+}
