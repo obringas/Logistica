@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/services/authService";
+import { login,login1 } from "@/services/authService";
 import { getGlobalUser } from "@/utils/globalState";
 
 export default function LoginPage() {
@@ -15,8 +15,12 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true);
     setError("");
-
-    const success = await login(username, password);
+    if (!username || !password) {
+      setError("Por favor, completa todos los campos.");
+      setLoading(false);
+      return;
+    }
+    const success = await login1(username, password);
     setLoading(false);
 
     if (success) {

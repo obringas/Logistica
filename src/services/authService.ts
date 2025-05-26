@@ -6,7 +6,37 @@ import { getUsers, saveUsers } from "@/utils/userStorage";
 const API_URL1 = process.env.NEXT_PUBLIC_API_URL ;
 const API_URL2="/api/proxy";
 const API_URL="/api";
-export async function login1(username: string, password: string ): Promise<boolean> 
+export async function login1(username: string, password: string): Promise<boolean> {
+  const encryptionKey = "mySecretKey12345";
+  const iv = "1234567890123456";
+
+  const encrypt = (text: string) => {
+    const key = CryptoJS.enc.Utf8.parse(encryptionKey);
+    const ivParsed = CryptoJS.enc.Utf8.parse(iv);
+
+    return CryptoJS.AES.encrypt(text, key, {
+      iv: ivParsed,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString();
+  };
+
+  // Validación local usando getUsers
+  const users = getUsers();
+  const matchedUser = users.find(
+    u => u.username === username && u.password === password
+  );
+
+  if (matchedUser) {
+    // Guardar usuario en localStorage y globalState
+    localStorage.setItem("user", JSON.stringify(matchedUser));
+    setGlobalUser(matchedUser);
+    return true;
+  }
+
+  return false;
+}
+export async function login11(username: string, password: string ): Promise<boolean> 
   {
   const encryptionKey = "mySecretKey12345";
   const iv = "1234567890123456";
