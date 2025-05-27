@@ -44,4 +44,8 @@ export interface UserGlobal {
   }
 }
 
-export let globalUser: User | null = parseCookie();
+export let globalUser: User | null = null;
+
+if (typeof window !== "undefined") {
+  globalUser = parseCookie();
+}

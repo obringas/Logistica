@@ -5,22 +5,26 @@ export function useStockData(filters: StockFilters) {
   const [data, setData] = useState<StockItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      try {
-        const result = await fetchStock(filters);
-        setData(result);
-      } catch (error) {
-        console.error(error);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+  console.log("🔵 Disparando useEffect con filtros:", filters);
+  
+  const getData = async () => {
+    try {
+      console.log("🟢 Llamando al endpoint:", process.env.NEXT_PUBLIC_API_STOCK_CONSULTA);
+      const result = await fetchStock(filters);
+      console.log("✅ Resultado de la API:", result);
+      setData(result);
+    } catch (error) {
+      console.error("🔴 Error en fetchStock:", error);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    getData();
-  }, [filters]);
+  setLoading(true);
+  getData();
+}, [filters]);
 
   return { data, loading };
 }

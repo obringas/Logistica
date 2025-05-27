@@ -25,7 +25,15 @@ export default function StockActualPage() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Stock Actual</h1>
-      <FiltrosStock filters={filters} onChange={setFilters} onSubmit={() => setSubmittedFilters(filters)} loading={loading} />
+     <FiltrosStock
+          filters={filters}
+          onChange={setFilters}
+          onSubmit={() => {
+            console.log("🟡 Ejecutando búsqueda con filtros:", filters);
+            setSubmittedFilters(filters);
+          }}
+          loading={loading}
+        />
       <ResultadoStock data={stock} loading={loading} />
     </div>
   );
