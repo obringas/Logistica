@@ -44,7 +44,7 @@ export function useStockData(filters: StockFilters) {
       console.log("🔵 Disparando useEffect con filtros:", filters);
 
       try {
-        const response = await fetch("/api/stock", {
+        const response = await fetch("/StockLogistica/api/stock", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
