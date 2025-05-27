@@ -15,7 +15,7 @@ export default function StockActualPage() {
     idGalpon: 0,
     idEstiba: 0,
     idProducto: 0,
-    codCampania: 2024,
+    codCampania: 2025,
     nroCataBuscar: 0,
   });
   const [submittedFilters, setSubmittedFilters] = useState(filters);

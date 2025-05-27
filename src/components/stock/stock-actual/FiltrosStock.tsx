@@ -8,7 +8,7 @@ interface Props {
 }
 
 // Opciones simuladas para filtros estáticos
-const campañas = [2017,2018,2019,2020,2021,2022, 2023, 2024,2025];
+const campañas = [2017,2018,2019,2020,2021,2022, 2023, 2024, 2025];
 const productos = [
   { id: 0, nombre: "Todos" },
   { id: 1, nombre: "Producto A" },
