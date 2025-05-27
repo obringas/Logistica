@@ -36,16 +36,31 @@ export interface StockItem {
   kilosTotalesConsulta: number;
 }
 
-export async function fetchStock(filters: StockFilters): Promise<StockItem[]> {
-  const response = await fetch(process.env.NEXT_PUBLIC_API_STOCK_CONSULTA!, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(filters),
-  });
 
-  if (!response.ok) {
-    throw new Error("Error al consultar el stock.");
+
+
+export async function fetchStock(filters: StockFilters) {
+  try {
+    console.log("🟡 Ejecutando búsqueda con filtros:", filters);
+
+    const response = await fetch("/api/stock", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(filters),
+    });
+
+    if (!response.ok) {
+      console.error("🔴 Error HTTP:", response.status, response.statusText);
+      throw new Error("Error al consultar el stock");
+    }
+
+    const data = await response.json();
+    console.log("🟢 Datos recibidos:", data);
+    return data;
+  } catch (error) {
+    console.error("🔴 Error en fetchStock:", error);
+    return null;
   }
-
-  return await response.json();
 }

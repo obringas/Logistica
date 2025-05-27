@@ -1,4 +1,12 @@
 // src/app/api/stock/route.ts
+import { fetch, Agent } from "undici";
+
+const agent = new Agent({
+  connect: {
+    rejectUnauthorized: false, // ⚠️ Ignora certificado autofirmado (solo para desarrollo)
+  },
+});
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -9,9 +17,11 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+      dispatcher: agent, // 👈 ESTO reemplaza a "agent"
     });
 
     const data = await response.json();
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { "Content-Type": "application/json" },
