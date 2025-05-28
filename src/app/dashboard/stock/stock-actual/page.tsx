@@ -1,10 +1,9 @@
-// app/dashboard/stock/stock-actual/page.tsx
 "use client";
 
 import { useState } from "react";
 import { FiltrosStock } from "@/components/stock/stock-actual/FiltrosStock";
 import { ResultadoStock } from "@/components/stock/stock-actual/ResultadoStock";
-import { StockFilters, useStockData } from "@/hooks/useStockData";
+import { StockFilters, StockItem, useStockData } from "@/hooks/useStockData";
 
 export default function StockActualPage() {
   const [filters, setFilters] = useState<StockFilters>({
@@ -18,23 +17,33 @@ export default function StockActualPage() {
     codCampania: 2025,
     nroCataBuscar: 0,
   });
-  const [submittedFilters, setSubmittedFilters] = useState(filters);
+  //const [stockData, setStockData] = useState<any[]>([]);
+  const [stockData, setStockData] = useState<StockItem[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const { data: stock, loading } = useStockData(submittedFilters);
+  const { fetchStockData } = useStockData();
+
+  const handleSubmit = async () => {
+  setLoading(true);
+  try {
+    console.log("🟡 Ejecutando búsqueda con filtros:", filters);
+    const data = await fetchStockData(filters);
+    setStockData(data ?? []);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Stock Actual</h1>
-     <FiltrosStock
-          filters={filters}
-          onChange={setFilters}
-          onSubmit={() => {
-            console.log("🟡 Ejecutando búsqueda con filtros:", filters);
-            setSubmittedFilters(filters);
-          }}
-          loading={loading}
-        />
-      <ResultadoStock data={stock} loading={loading} />
+      <FiltrosStock
+        filters={filters}
+        onChange={setFilters}
+        onSubmit={handleSubmit}
+        loading={loading}
+      />
+      <ResultadoStock data={stockData} loading={loading} />
     </div>
   );
 }

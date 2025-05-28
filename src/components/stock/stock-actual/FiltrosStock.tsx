@@ -10,9 +10,17 @@ interface Props {
 // Opciones simuladas para filtros estáticos
 const campañas = [2017,2018,2019,2020,2021,2022, 2023, 2024, 2025];
 const productos = [
-  { id: 0, nombre: "Todos" },
-  { id: 1, nombre: "Producto A" },
-  { id: 2, nombre: "Producto B" },
+    { id: 0, codigo: 0, descripcion: "Todos" },
+  { id: 1, codigo: 6, descripcion: "Fardito" },
+  { id: 2, codigo: 100, descripcion: "Lamina" },
+  { id: 3, codigo: 200, descripcion: "Scrap Grande" },
+  { id: 4, codigo: 300, descripcion: "Scrap Chico" },
+  { id: 5, codigo: 400, descripcion: "Palo Largo" },
+  { id: 6, codigo: 500, descripcion: "Palo Mezcla" },
+  { id: 7, codigo: 600, descripcion: "Palo Corto" },
+  { id: 8, codigo: 900, descripcion: "Fibra" },
+  { id: 9, codigo: 1000, descripcion: "Tabaco Importado" },
+  { id: 10, codigo: 9999, descripcion: "SIN TIPO PRODUCTO" },
 ];
 const grados = [
   { id: 0, nombre: "Todos" },
@@ -52,7 +60,7 @@ export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
           >
             {productos.map(p => (
-              <option key={p.id} value={p.id}>{p.nombre}</option>
+              <option key={p.id} value={p.id}>{p.descripcion}</option>
             ))}
           </select>
         </div>

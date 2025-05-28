@@ -1,5 +1,4 @@
-// src/hooks/useStockData.ts
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export interface StockFilters {
   idAdministrador: number;
@@ -31,44 +30,29 @@ export interface StockItem {
   kilosTotalesConsulta: number;
 }
 
-export function useStockData(filters: StockFilters) {
-  const [data, setData] = useState<StockItem[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+export function useStockData() {
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      setError(null);
+  const fetchStockData = async (filters: StockFilters): Promise<StockItem[] | null> => {
+    try {
+      const response = await fetch("/StockLogistica/api/stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(filters),
+      });
 
-      console.log("🔵 Disparando useEffect con filtros:", filters);
-
-      try {
-        const response = await fetch("/StockLogistica/api/stock", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(filters),
-        });
-
-        if (!response.ok) {
-          throw new Error("Error al consultar el stock.");
-        }
-
-        const result: StockItem[] = await response.json();
-        setData(result);
-      } catch (err: any) {
-        console.error("🔴 Error en fetchStock:", err);
-        setError(err.message || "Error desconocido");
-        setData(null);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Error al consultar el stock.");
       }
-    };
 
-    getData();
-  }, [filters]);
+      const result: StockItem[] = await response.json();
+      return result;
+    } catch (err: any) {
+      console.error("🔴 Error en fetchStock:", err);
+      setError(err.message || "Error desconocido");
+      return null;
+    }
+  };
 
-  return { data, loading, error };
+  return { fetchStockData, error };
 }
