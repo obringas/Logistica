@@ -33,3 +33,18 @@ export async function fetchStock(filtros: FiltrosStock) {
     throw error;
   }
 }
+export async function getGrados(campania: number): Promise<{ idGradoMarca: number; nombreGradoMarca: string }[]> {
+  const response = await fetch("/api/stock/get-grados", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ campania, idPropietario: 3 }),
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener los grados.");
+  }
+
+  return await response.json();
+}

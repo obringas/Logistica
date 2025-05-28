@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { StockFilters } from "@/hooks/useStockData";
+import { useGradoData } from "@/hooks/useGrados";
 
 interface Props {
   filters: StockFilters;
@@ -7,10 +9,9 @@ interface Props {
   loading: boolean;
 }
 
-// Opciones simuladas para filtros estáticos
-const campañas = [2017,2018,2019,2020,2021,2022, 2023, 2024, 2025];
+const campañas = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
 const productos = [
-    { id: 0, codigo: 0, descripcion: "Todos" },
+  { id: 0, codigo: 0, descripcion: "Todos" },
   { id: 1, codigo: 6, descripcion: "Fardito" },
   { id: 2, codigo: 100, descripcion: "Lamina" },
   { id: 3, codigo: 200, descripcion: "Scrap Grande" },
@@ -22,17 +23,34 @@ const productos = [
   { id: 9, codigo: 1000, descripcion: "Tabaco Importado" },
   { id: 10, codigo: 9999, descripcion: "SIN TIPO PRODUCTO" },
 ];
-const grados = [
-  { id: 0, nombre: "Todos" },
-  { id: 10, nombre: "Grado 10" },
-  { id: 20, nombre: "Grado 20" },
-];
 
 export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
+  const [gradosOptions, setGradosOptions] = useState([{ id: 0, nombre: "Todos" }]);
+  const { grados, fetchGrados } = useGradoData();
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     onChange({ ...filters, [name]: Number(value) });
   };
+
+  useEffect(() => {
+    if (!filters.codCampania) return;
+
+    fetchGrados(filters.codCampania, 3);
+  }, [filters.codCampania]);
+
+  useEffect(() => {
+    const mapped = grados.map(g => ({
+      id: g.idGradoMarca,
+      nombre: g.nombreGradoMarca,
+    }));
+    setGradosOptions([{ id: 0, nombre: "Todos" }, ...mapped]);
+
+    // Si no hay grado seleccionado aún, ponemos -1
+    if (filters.idGrado === undefined || filters.idGrado === null) {
+      onChange({ ...filters, idGrado: 0 });
+    }
+  }, [grados]);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-300 mb-6">
@@ -73,8 +91,8 @@ export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
             onChange={handleInputChange}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
           >
-            {grados.map(g => (
-              <option key={g.id} value={g.id}>{g.nombre}</option>
+            {gradosOptions.map(g => (
+              <option key={`grado-${g.id}`} value={g.id}>{g.nombre}</option>
             ))}
           </select>
         </div>
