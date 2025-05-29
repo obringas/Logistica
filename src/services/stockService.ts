@@ -48,3 +48,29 @@ export async function getGrados(campania: number): Promise<{ idGradoMarca: numbe
 
   return await response.json();
 }
+export async function fetchDetalleStock(idGrado: number) {
+  const response = await fetch("/api/stock/detalle", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      idGrado,
+      idGalpon: 0,
+      idEstiba: 0,
+      idEstado: 0,
+      idVariedad: 0,
+      idProducto: 0,
+      idPropietario: 0,
+      nroBultoDesde: 0,
+      nroBultoHasta: 0,
+      nroCata: 0,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener el detalle.");
+  }
+
+  return await response.json();
+}

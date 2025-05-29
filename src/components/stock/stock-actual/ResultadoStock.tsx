@@ -1,7 +1,10 @@
+// components/stock/stock-actual/ResultadoStock.tsx
 'use client';
 import { useState } from "react";
 import { StockItem } from "@/hooks/useStockData";
+import { useDetalleStock } from "@/hooks/useDetalleStock";
 import * as XLSX from "xlsx";
+import { DetalleStockTabla } from "./DetalleStockTabla";
 
 interface Props {
   data: StockItem[] | null;
@@ -12,6 +15,15 @@ const ITEMS_PER_PAGE = 10;
 
 export function ResultadoStock({ data, loading }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [detalleOpen, setDetalleOpen] = useState(false);
+  const [selectedIdGrado, setSelectedIdGrado] = useState<number | null>(null);
+  const { detalle, fetchDetalle, loading: loadingDetalle } = useDetalleStock();
+
+  const handleVerDetalle = async (idGrado: number) => {
+    setSelectedIdGrado(idGrado);
+    await fetchDetalle(idGrado);
+    setDetalleOpen(true);
+  };
 
   const exportToExcel = () => {
     if (!data) return;
@@ -39,6 +51,7 @@ export function ResultadoStock({ data, loading }: Props) {
         <table className="min-w-full text-sm text-left text-gray-700 bg-white">
           <thead className="bg-gray-100 text-xs uppercase font-medium text-gray-600">
             <tr>
+              <th className="px-2 py-1">🔍</th>
               <th className="px-2 py-1">Producto</th>
               <th className="px-2 py-1">Variedad</th>
               <th className="px-2 py-1">Grado</th>
@@ -55,6 +68,11 @@ export function ResultadoStock({ data, loading }: Props) {
           <tbody>
             {paginatedData.map((item, idx) => (
               <tr key={idx} className="border-t">
+                <td className="px-2 py-1 text-center">
+                  <button onClick={() => handleVerDetalle(item.id_gradoMarca)} className="text-blue-600 hover:text-blue-800">
+                    🔍
+                  </button>
+                </td>
                 <td className="px-2 py-1">{item.tipoProducto}</td>
                 <td className="px-2 py-1">{item.variedad}</td>
                 <td className="px-2 py-1">{item.nombreGradoMarca}</td>
@@ -80,6 +98,10 @@ export function ResultadoStock({ data, loading }: Props) {
           </button>
         ))}
       </div>
+
+      {detalleOpen && selectedIdGrado !== null && (
+        <DetalleStockTabla detalle={detalle} loading={loadingDetalle} onClose={() => setDetalleOpen(false)} />
+      )}
     </div>
   );
 }
