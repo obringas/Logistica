@@ -30,17 +30,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <li>
               <details className="bg-gray-800 p-2 rounded">
                 <summary className="cursor-pointer">📊 Reportes</summary>
+                
                 <ul className="ml-4 mt-2 space-y-1">
-                  <li>
-                    <Link href="/dashboard/reportes/liquidaciones-por-socio" className="block p-2 hover:bg-gray-700">
-                      Liquidaciones por Socio
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/dashboard/reportes/entregas-por-socio" className="block p-2 hover:bg-gray-700">
-                      Entregas por Socio
-                    </Link>
-                  </li>
+                 
                   <li>
                     <Link href="/dashboard/stock/stock-actual" className="block p-2 hover:bg-gray-700">
                       Stock Actual
