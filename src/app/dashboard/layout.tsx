@@ -38,6 +38,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                       Stock Actual
                     </Link>
                   </li>
+                  <li>
+                    <Link href="/dashboard/stock/busqueda-cata" className="block px-4 py-2 hover:bg-gray-200">
+                      🔍 Búsqueda por CATA
+                    </Link>
+                  </li>
                 </ul>
               </details>
             </li>
