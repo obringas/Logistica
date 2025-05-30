@@ -8,19 +8,13 @@ export interface BusquedaCataRequest {
 }
 
 export function useBusquedaCata() {
-  const [filtros, setFiltros] = useState<BusquedaCataRequest>({
-    idGrado: 0,
-    idPropietario: 0,
-    nroCata: 0,
-  });
-
   const [resultados, setResultados] = useState<DetalleItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   const buscar = async ({ idGrado, idPropietario, nroCata }: BusquedaCataRequest) => {
     setLoading(true);
     try {
-      const response = await fetch("/StockLogistica/api/stock/detalle", {
+      const res = await fetch("/StockLogistica/api/stock/detalle", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -36,27 +30,16 @@ export function useBusquedaCata() {
           nroCata,
         }),
       });
-      const data = await response.json();
-      setResultados(data);
+
+      const data = await res.json();
+      setResultados(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error al buscar CATA:", error);
+      console.error("Error en búsqueda:", error);
       setResultados([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const limpiar = () => {
-    setFiltros({ idGrado: 0, idPropietario: 0, nroCata: 0 });
-    setResultados([]);
-  };
-
-  return {
-    filtros,
-    setFiltros,
-    resultado: resultados,
-    buscar,
-    limpiar,
-    loading,
-  };
+  return { resultados, buscar, loading };
 }

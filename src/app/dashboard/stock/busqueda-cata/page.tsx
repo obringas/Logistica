@@ -1,30 +1,41 @@
-// src/app/dashboard/busqueda-cata/page.tsx
-'use client';
+"use client";
 
-import { useBusquedaCata } from '@/hooks/useBusquedaCata';
-import { BusquedaCataForm } from '@/components/stock/busqueda-cata/BusquedaCataForm';
-import { BusquedaCataResultado } from '@/components/stock/busqueda-cata/BusquedaCataResultado';
+import { useState } from "react";
+import { BusquedaCataForm } from "@/components/stock/busqueda-cata/BusquedaCataForm";
+import { BusquedaCataResultado } from "@/components/stock/busqueda-cata/BusquedaCataResultado";
+import { useBusquedaCata } from "@/hooks/useBusquedaCata";
+import { BusquedaCataRequest } from "@/services/stockService";
 
 export default function BusquedaCataPage() {
-  const {
-    filtros,
-    setFiltros,
-    resultado,
-    loading,
-    buscar,
-    limpiar,
-  } = useBusquedaCata();
+  const { resultados, buscar, loading } = useBusquedaCata();
+
+  const [filtros, setFiltros] = useState<BusquedaCataRequest>({
+    idGrado: 0,
+    idPropietario: 0,
+    nroCata: 0,
+  });
+
+  const handleBuscar = async () => {
+    await buscar(filtros);
+  };
+
+  const handleLimpiar = () => {
+    setFiltros({ idGrado: 0, idPropietario: 0, nroCata: 0 });
+  };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">🔍 Búsqueda por CATA</h1>
+    <div className="p-4">
+      <h2 className="text-xl font-semibold mb-4">🔍 Búsqueda por CATA</h2>
       <BusquedaCataForm
         filtros={filtros}
         setFiltros={setFiltros}
-        onBuscar={buscar}
-        onLimpiar={limpiar}
+        onBuscar={handleBuscar}
+        onLimpiar={handleLimpiar}
       />
-      <BusquedaCataResultado data={resultado} loading={loading} />
+
+      <div className="mt-4">
+        <BusquedaCataResultado resultados={resultados} loading={loading} />
+      </div>
     </div>
   );
 }

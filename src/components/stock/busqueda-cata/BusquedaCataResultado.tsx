@@ -2,13 +2,14 @@
 import { DetalleItem } from "@/hooks/useDetalleStock";
 
 interface Props {
-  data: DetalleItem[];
+  resultados: DetalleItem[];
   loading: boolean;
 }
 
-export function BusquedaCataResultado({ data, loading }: Props) {
+
+export function BusquedaCataResultado({ resultados, loading }: Props) {
   if (loading) return <p className="text-blue-600">🔄 Buscando...</p>;
-  if (!data || data.length === 0) return <p className="text-gray-500">No se encontraron resultados.</p>;
+  if (!resultados || resultados.length === 0) return <p className="text-gray-500">No se encontraron resultados.</p>;
 
   return (
     <div className="mt-4 border rounded shadow overflow-x-auto">
@@ -26,7 +27,7 @@ export function BusquedaCataResultado({ data, loading }: Props) {
           </tr>
         </thead>
         <tbody>
-          {data.map((d, idx) => (
+          {resultados.map((d, idx) => (
             <tr key={idx} className="border-t">
               <td className="px-2 py-1">{d.nombreGradoMarca}</td>
               <td className="px-2 py-1">{d.campania}</td>

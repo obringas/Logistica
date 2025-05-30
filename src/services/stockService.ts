@@ -9,6 +9,11 @@ interface FiltrosStock {
   idSector: number;
   estado: string;
 }
+export interface BusquedaCataRequest {
+  idGrado: number;
+  idPropietario: number;
+  nroCata: number;
+}
 
 export async function fetchStock(filtros: FiltrosStock) {
   console.log("🟡 Ejecutando búsqueda con filtros:", filtros);
