@@ -6,12 +6,13 @@ const agent = new Agent({
     rejectUnauthorized: false, // ⚠️ Ignora certificado autofirmado (solo para desarrollo)
   },
 });
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const response = await fetch("https://localhost:7021/api/Stock/consulta", {
+    const response = await fetch(`${BASE_URL}/Stock/consulta`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

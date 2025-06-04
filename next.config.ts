@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: '/StockLogistica',
-  output: 'standalone',
+  output: 'export',
 }
 
 export default nextConfig;
