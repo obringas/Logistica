@@ -1,9 +1,19 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { isSessionActive, autoLogoutOnInactivity } from "@/utils/authUtils";
+
 export default function DashboardPage() {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold">Bienvenido al Dashboard</h1>
-        <p>Aquí puedes ver tu contenido.</p>
-      </div>
-    );
-  }
-  
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isSessionActive()) {
+      router.push("/login");
+    } else {
+      autoLogoutOnInactivity(15); // 15 minutos
+    }
+  }, []);
+
+  return <div>Bienvenido</div>;
+}

@@ -1,11 +1,14 @@
 import CryptoJS from "crypto-js";
 import {  setGlobalUser,clearGlobalUser } from "@/utils/globalState";
 import { getUsers, saveUsers } from "@/utils/userStorage";
+import { setAuthCookie } from "@/utils/authUtils";
 
 
 const API_URL1 = process.env.NEXT_PUBLIC_API_URL ;
 const API_URL2="/api/proxy";
 const API_URL="/api";
+
+
 export async function login1(username: string, password: string): Promise<boolean> {
   const encryptionKey = "mySecretKey12345";
   const iv = "1234567890123456";
@@ -21,21 +24,42 @@ export async function login1(username: string, password: string): Promise<boolea
     }).toString();
   };
 
-  // Validación local usando getUsers
   const users = getUsers();
   const matchedUser = users.find(
-    u => u.username === username && u.password === password
+    (u) => u.username === username && u.password === password
   );
 
   if (matchedUser) {
-    // Guardar usuario en localStorage y globalState
-    localStorage.setItem("user", JSON.stringify(matchedUser));
-    setGlobalUser(matchedUser);
+    const fakeToken = generateFakeJwt({
+      userId: matchedUser.id,
+      userName: matchedUser.username,
+      role: matchedUser.role || "user",
+      exp: Math.floor(Date.now() / 1000) + 15 * 60, // ⏰ 15 minutos
+    });
+
+      const userData = {
+      userId: matchedUser.id,
+      userName: matchedUser.username,
+      role: matchedUser.role || "user",
+      token: fakeToken,
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    setGlobalUser(userData);
+    setAuthCookie(userData.token);
+
     return true;
   }
 
   return false;
 }
+
+function generateFakeJwt(payload: object): string {
+  const header = { alg: "HS256", typ: "JWT" };
+  const encode = (obj: object) => btoa(JSON.stringify(obj)).replace(/=/g, "");
+  return `${encode(header)}.${encode(payload)}.signature`;
+}
+
 export async function login11(username: string, password: string ): Promise<boolean> 
   {
   const encryptionKey = "mySecretKey12345";
@@ -80,6 +104,7 @@ export async function login11(username: string, password: string ): Promise<bool
       sessionStorage.setItem("user", JSON.stringify(data)); // Usamos sessionStorage para que los datos sean inmediatos
       localStorage.setItem("user", JSON.stringify(data)); // También lo guardamos en localStorage
       setGlobalUser(data); // Actualiza el estado global del usuario;
+ //     setAuthCookie(data.token)
       return true;
     } else {
       throw new Error("Credenciales incorrectas");
@@ -143,28 +168,4 @@ export function updateUserData(id: number, newUsername: string, newPassword: str
     localStorage.setItem("authUser", JSON.stringify(newUserData));
     setGlobalUser(newUserData);
   }
-}
-export function loginLocal(username: string, password: string): boolean {
-  const user = getUsers().find(
-    (u) => u.username === username && u.password === password && u.active
-  );
-
-  if (user) {
-    const userData = {
-      userId: user.id,
-      userName: user.username,
-     // email: user.email || "",
-      role: user.role,
-      applicationName: "Local",
-    };
-
-    // Guardar en cookie (1h)
-    document.cookie = `auth_token=${btoa(JSON.stringify(userData))}; path=/; max-age=3600`;
-    localStorage.setItem("authUser", JSON.stringify(userData));
-    setGlobalUser(userData);
-
-    return true;
-  }
-
-  return false;
 }

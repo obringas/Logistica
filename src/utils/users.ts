@@ -7,6 +7,7 @@ export interface User {
     active: boolean;
     email?: string; 
     applicationName?: string; 
+      token?: string;
   }
   
   // Datos iniciales
