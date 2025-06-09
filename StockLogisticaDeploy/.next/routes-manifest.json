@@ -1,0 +1,138 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "/StockLogistica",
+  "redirects": [
+    {
+      "source": "/StockLogistica/",
+      "destination": "/StockLogistica",
+      "basePath": false,
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^/StockLogistica/$"
+    },
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "dynamicRoutes": [
+    {
+      "page": "/dashboard/admin/users/edit/[id]",
+      "regex": "^/dashboard/admin/users/edit/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/dashboard/admin/users/edit/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/admin/users",
+      "regex": "^/dashboard/admin/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/admin/users(?:/)?$"
+    },
+    {
+      "page": "/dashboard/admin/users/create",
+      "regex": "^/dashboard/admin/users/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/admin/users/create(?:/)?$"
+    },
+    {
+      "page": "/dashboard/proceso/info-corrida",
+      "regex": "^/dashboard/proceso/info\\-corrida(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/proceso/info\\-corrida(?:/)?$"
+    },
+    {
+      "page": "/dashboard/profile",
+      "regex": "^/dashboard/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/profile(?:/)?$"
+    },
+    {
+      "page": "/dashboard/reportes/entregas-por-socio",
+      "regex": "^/dashboard/reportes/entregas\\-por\\-socio(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/reportes/entregas\\-por\\-socio(?:/)?$"
+    },
+    {
+      "page": "/dashboard/reportes/liquidaciones-por-socio",
+      "regex": "^/dashboard/reportes/liquidaciones\\-por\\-socio(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/reportes/liquidaciones\\-por\\-socio(?:/)?$"
+    },
+    {
+      "page": "/dashboard/stock/busqueda-cata",
+      "regex": "^/dashboard/stock/busqueda\\-cata(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/stock/busqueda\\-cata(?:/)?$"
+    },
+    {
+      "page": "/dashboard/stock/stock-actual",
+      "regex": "^/dashboard/stock/stock\\-actual(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/stock/stock\\-actual(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/stock",
+      "regex": "^/stock(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/stock(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "RSC",
+    "varyHeader": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    "prefetchHeader": "Next-Router-Prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "Next-Router-Segment-Prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  },
+  "rewrites": []
+}

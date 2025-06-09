@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Filtros from "@/components/stock/stock-actual/Filtros";
-import ResultadoTabla from "@/components/stock/stock-actual/ResultadoTabla";
-import DetalleTabla from "@/components/stock/stock-actual/DetalleTabla";
+//import Filtros from "@/components/stock/stock-actual/Filtros";
+//import ResultadoTabla from "@/components/stock/stock-actual/ResultadoTabla";
+//import DetalleTabla from "@/components/stock/stock-actual/DetalleTabla";
 
 const mockResultados = [
   {
@@ -69,11 +69,7 @@ export default function Page() {
   return (
     <div className="container mx-auto mt-4 p-4">
       <h2 className="text-2xl font-bold mb-4">Consultar Stock </h2>
-      {!detalleVisible && <Filtros onBuscar={handleBuscar} />}
-      {!detalleVisible && (
-        <ResultadoTabla data={resultados} onDetalleClick={handleDetalleClick} />
-      )}
-      {detalleVisible && <DetalleTabla data={detalle} onVolver={handleVolver} />}
+    
     </div>
   );
 }
