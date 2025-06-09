@@ -1,17 +1,14 @@
 /** @type {import('next').NextConfig} */
-
 const path = require('path');
 
-// Detectamos si estamos en modo desarrollo
 const isDev = process.env.NODE_ENV === 'development';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
 const basePath = '/StockLogistica';
 
 const nextConfig = {
-  // Aplicar standalone solo en producción
-  //...(isDev ? {} : { output: 'standalone' }),
-output: 'standalone', // 🔥 siempre aplica
+  output: 'standalone',
   basePath: basePath,
+  assetPrefix: basePath, // 🟢 NECESARIO para servir correctamente estáticos en subruta
 
   async rewrites() {
     if (isDev) {
