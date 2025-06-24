@@ -64,6 +64,22 @@ export interface ReprocesosResponse {
   kgsNetoDescripcion: string;
   rendimientoDescripcion: string;
 }
+export interface ProductoCajaResponse {
+  campania: number;
+  nroOperacion: number;
+  marca: string;
+  nroBulto: string;
+  nroCATA: string;
+  kgsNeto: number;
+  tara: number;
+  fecha: string; // O `Date` si vas a convertirlo al recibirlo
+  lote: string;
+  estado: string;
+  nroEnCorrida?: number;
+  nroEnMarca?: number;
+  nroEnLotnumber?: number;
+  lotNumberCliente: string;
+}
 
 export async function obtenerBlends(request: BlendRequest): Promise<BlendResponse[]> {
   const response = await fetch("/StockLogistica/api/proceso/blends", {
@@ -163,6 +179,22 @@ export async function obtenerMermas(request: CorridaRequest): Promise<CorridaRes
 }
 export async function obtenerReprocesos(request: ReprocesosRequest): Promise<ReprocesosResponse[]> {
   const response = await fetch("/StockLogistica/api/proceso/reprocesos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudo obtener la información de corrida.");
+  }
+
+  return await response.json();
+}
+
+export async function obtenerCajas(request: CorridaRequest): Promise<ProductoCajaResponse[]> {
+  const response = await fetch("/StockLogistica/api/proceso/cajas", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

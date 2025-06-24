@@ -7,15 +7,7 @@ export interface UserGlobal {
     token: string;
     applicationName?: string;
   }
-  export interface User {
-    id: number;
-    username: string;
-    password: string;
-    role: 'admin' | 'user';
-    active: boolean;
-    email: string;
-     applicationName?: string;
-  }
+
   // Estado global del usuario
   
   
@@ -25,7 +17,7 @@ export interface UserGlobal {
   }
   
   // Función para obtener el usuario global
-  export function getGlobalUser(): User | null {
+  export function getGlobalUser(): UserGlobal | null {
     return globalUser;
   }
 
@@ -44,7 +36,7 @@ export interface UserGlobal {
   }
 }
 
-export let globalUser: User | null = null;
+export let globalUser: UserGlobal| null = null;
 
 if (typeof window !== "undefined") {
   globalUser = parseCookie();

@@ -44,6 +44,7 @@
     "cp-cli": "^2.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
+    "fs-extra": "^11.3.0",
     "tailwindcss": "^4.0.13",
     "typescript": "^5"
   }

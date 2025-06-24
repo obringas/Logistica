@@ -12,7 +12,9 @@ import {
   obtenerSobrantes,
   obtenerMermas, // <-- nuevo
   obtenerReprocesos, // <-- nuevo
-  ReprocesosResponse
+  ReprocesosResponse,
+  ProductoCajaResponse,
+  obtenerCajas
 } from "@/services/procesoService";
 
 export function useInfoCorrida() {
@@ -29,6 +31,7 @@ export function useInfoCorrida() {
  const [mermas, setMermas] = useState<CorridaResponse[]>([])
   const [reprocesos, setReprocesos] = useState<ReprocesosResponse[]>([]); // <-- nuevo
   const [loading, setLoading] = useState(false);
+  const [cajas, setCajas] = useState<ProductoCajaResponse[]>([]); // <-- nuevo
 
   const cargarBlends = async (campania: number) => {
     setCampania(campania);
@@ -103,6 +106,25 @@ export function useInfoCorrida() {
     }
   };
 
+   const buscarCajas = async () => {
+    if (!campania || !operacionSeleccionada) return;
+    setLoading(true);
+    try {
+      const filtros: CorridaRequest = {
+        campania,
+        nroOperacion: operacionSeleccionada,
+      };
+      const data = await obtenerCajas(filtros);
+      setCajas(data);    
+      
+    } catch (error) {
+      console.error("Error al buscar corrida:", error);
+      setCajas([]);
+    } finally {
+      setLoading(false);
+    }
+   }
+
   return {
     campania,
     setCampania,
@@ -121,5 +143,7 @@ export function useInfoCorrida() {
     cargarBlends,
     cargarOperaciones,
     buscar,
+    buscarCajas,
+    cajas
   };
 }

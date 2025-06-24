@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { StockFilters } from "@/hooks/useStockData";
 import { useGradoData } from "@/hooks/useGrados";
+import { useCampaniaData } from "@/hooks/useCampaniaData"; // 👈 nuevo hook
 
 interface Props {
   filters: StockFilters;
@@ -27,11 +28,16 @@ const productos = [
 export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
   const [gradosOptions, setGradosOptions] = useState([{ id: 0, nombre: "Todos" }]);
   const { grados, fetchGrados } = useGradoData();
+  const { campanias, fetchCampanias, loading: loadingCampanias } = useCampaniaData(); // 👈 usamos el hook
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     onChange({ ...filters, [name]: Number(value) });
   };
+    useEffect(() => {
+    fetchCampanias(); // 👈 carga automática al montar el componente
+  }, []);
 
   useEffect(() => {
     if (!filters.codCampania) return;
@@ -62,10 +68,18 @@ export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
             value={filters.codCampania}
             onChange={handleInputChange}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              disabled={loadingCampanias}
           >
-            {campañas.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {loadingCampanias ? (
+              <option>Cargando...</option>
+            ) : (
+              campanias.map(c => (
+                <option key={c.codigo_Camp} value={c.codigo_Camp}>
+                  {c.codigo_Camp}
+                </option>
+              ))
+            )}         
+          
           </select>
         </div>
 

@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login,login1 } from "@/services/authService";
-import { getGlobalUser } from "@/utils/globalState";
+import { loginLocal } from "@/services/authService";
+import { useAuth } from "@/context/AuthContext"; // 1. Importamos el hook de autenticación
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  
   const router = useRouter();
+  const { setUser } = useAuth(); // 2. Obtenemos la función para establecer el usuario del contexto
 
   const handleLogin = async () => {
     setLoading(true);
@@ -20,12 +22,17 @@ export default function LoginPage() {
       setLoading(false);
       return;
     }
-    const success = await login1(username, password);
+
+    // 3. Llamamos al servicio, que ahora devuelve los datos del usuario o null
+    const userData = await loginLocal(username, password);
     setLoading(false);
 
-    if (success) {
+    if (userData) {
+      // 4. Si el login fue exitoso, actualizamos el estado global de la app
+      setUser(userData); 
+      console.log("Login exitoso. Usuario establecido en el contexto:", userData);
+      // Y redirigimos al dashboard
       router.push("/dashboard");
-      console.log("Usuario actual:", getGlobalUser());
     } else {
       setError("Usuario o contraseña incorrectos");
     }
@@ -45,6 +52,7 @@ export default function LoginPage() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           disabled={loading}
+          onKeyDown={(e) => e.key === 'Enter' && handleLogin()} // Bonus: login con Enter
         />
 
         <label className="block text-sm font-medium mb-1 text-gray-700">Contraseña</label>
@@ -54,6 +62,7 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
+          onKeyDown={(e) => e.key === 'Enter' && handleLogin()} // Bonus: login con Enter
         />
 
         <button
