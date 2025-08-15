@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useEffect, useState, useMemo } from "react";
 import { StockFilters } from "@/hooks/useStockData";
 import { useGradoData } from "@/hooks/useGrados";
-import { useCampaniaData } from "@/hooks/useCampaniaData"; // 👈 nuevo hook
+import { useCampaniaData } from "@/hooks/useCampaniaData";
 
 interface Props {
   filters: StockFilters;
@@ -10,7 +12,7 @@ interface Props {
   loading: boolean;
 }
 
-const campañas = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+// Lista de productos completa
 const productos = [
   { id: 0, codigo: 0, descripcion: "Todos" },
   { id: 1, codigo: 6, descripcion: "Fardito" },
@@ -28,20 +30,24 @@ const productos = [
 export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
   const [gradosOptions, setGradosOptions] = useState([{ id: 0, nombre: "Todos" }]);
   const { grados, fetchGrados } = useGradoData();
-  const { campanias, fetchCampanias, loading: loadingCampanias } = useCampaniaData(); // 👈 usamos el hook
+  const { campanias, fetchCampanias, loading: loadingCampanias } = useCampaniaData();
 
+  const campaniasOptions = useMemo(() => {
+    const todasOption = { codigo_Camp: 0 };
+    return [todasOption, ...campanias];
+  }, [campanias]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     onChange({ ...filters, [name]: Number(value) });
   };
-    useEffect(() => {
-    fetchCampanias(); // 👈 carga automática al montar el componente
+  
+  useEffect(() => {
+    fetchCampanias();
   }, []);
 
   useEffect(() => {
-    if (!filters.codCampania) return;
-
+    if (filters.codCampania === undefined || filters.codCampania === null) return;
     fetchGrados(filters.codCampania, 3);
   }, [filters.codCampania]);
 
@@ -51,8 +57,6 @@ export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
       nombre: g.nombreGradoMarca,
     }));
     setGradosOptions([{ id: 0, nombre: "Todos" }, ...mapped]);
-
-    // Si no hay grado seleccionado aún, ponemos -1
     if (filters.idGrado === undefined || filters.idGrado === null) {
       onChange({ ...filters, idGrado: 0 });
     }
@@ -68,18 +72,17 @@ export function FiltrosStock({ filters, onChange, onSubmit, loading }: Props) {
             value={filters.codCampania}
             onChange={handleInputChange}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-              disabled={loadingCampanias}
+            disabled={loadingCampanias}
           >
-            {loadingCampanias ? (
+            {loadingCampanias && campanias.length === 0 ? (
               <option>Cargando...</option>
             ) : (
-              campanias.map(c => (
+              campaniasOptions.map(c => (
                 <option key={c.codigo_Camp} value={c.codigo_Camp}>
-                  {c.codigo_Camp}
+                  {c.codigo_Camp === 0 ? "Todas" : c.codigo_Camp}
                 </option>
               ))
-            )}         
-          
+            )}
           </select>
         </div>
 

@@ -1,45 +1,43 @@
-import { useState } from "react";
-import { DetalleItem } from "./useDetalleStock";
+import { useState, useCallback } from "react";
+import {
+  BusquedaCataRequest,
+  DetalleItem,
+} from "@/services/stockService";
 
-export interface BusquedaCataRequest {
-  idGrado: number;
-  idPropietario: number;
-  nroCata: number;
-}
-
-export function useBusquedaCata() {
+export const useBusquedaCata = () => {
   const [resultados, setResultados] = useState<DetalleItem[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const buscar = async ({ idGrado, idPropietario, nroCata }: BusquedaCataRequest) => {
+  const buscar = useCallback(async (params: BusquedaCataRequest) => {
     setLoading(true);
     try {
-      const res = await fetch("/StockLogistica/api/stock/detalle", {
+      const response = await fetch("/StockLogistica/api/stock/detalle", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idGrado,
-          idGalpon: 0,
-          idEstiba: 0,
-          idEstado: 0,
-          idVariedad: 0,
-          idProducto: 0,
-          idPropietario,
-          nroBultoDesde: 0,
-          nroBultoHasta: 0,
-          nroCata,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
       });
 
-      const data = await res.json();
-      setResultados(Array.isArray(data) ? data : []);
+      if (!response.ok) {
+        // Lanzamos un error para que el componente lo capture
+        throw new Error(`Error del servidor: ${response.statusText}`);
+      }
+
+      const data: DetalleItem[] = await response.json();
+      setResultados(data);
     } catch (error) {
-      console.error("Error en búsqueda:", error);
-      setResultados([]);
+      console.error("Error en la búsqueda:", error);
+      setResultados([]); // Limpiamos resultados en caso de error
+      throw error; // Re-lanzamos el error para que el componente lo maneje
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  return { resultados, buscar, loading };
-}
+  const limpiarResultados = useCallback(() => {
+    setResultados([]);
+  }, []);
+
+  return { resultados, buscar, loading, limpiarResultados };
+};

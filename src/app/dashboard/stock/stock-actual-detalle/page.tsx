@@ -1,44 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { FiltrosStock } from "@/components/stock/stock-actual/FiltrosStock";
-import { ResultadoStock } from "@/components/stock/stock-actual/ResultadoStock";
-import { StockFilters, StockItem, useStockData } from "@/hooks/useStockData";
+import { FiltrosStockDetalle } from "@/components/stock/stock-actual-detalle/FiltrosStockDetalle";
+import { ResultadoStockDetalle } from "@/components/stock/stock-actual-detalle/ResultadoStockDetalle";
+import { StockActualDetalleRequest } from "@/services/stockService";
+import { useStockActualDetalle } from "@/hooks/useStockActualDetalle";
 import { SlidersHorizontal, ChevronDown, ChevronUp } from "lucide-react";
 
-export default function StockActualPage() {
-  const [filters, setFilters] = useState<StockFilters>({
-    idAdministrador: 3,
-    idGrado: 0,
-    cajaDesde: 0,
-    cajaHasta: 0,
-    idGalpon: 0,
-    idEstiba: 0,
-    idProducto: 0,
-    codCampania: new Date().getFullYear(), // Inicia con el año actual
-    nroCataBuscar: 0,
+export default function StockActualDetallePage() {
+  const [filters, setFilters] = useState<StockActualDetalleRequest>({
+    campania: new Date().getFullYear(), // Inicia con el año actual
   });
 
-  const [stockData, setStockData] = useState<StockItem[]>([]);
-  const [loading, setLoading] = useState(false);
   const [mostrarFiltros, setMostrarFiltros] = useState(true); // Para el panel plegable
 
-  const { fetchStockData } = useStockData();
+  const { data, loading, fetchStockActualDetalle } = useStockActualDetalle();
 
   const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      console.log("🟡 Ejecutando búsqueda con filtros:", filters);
-      const data = await fetchStockData(filters);
-      setStockData(data ?? []);
-    } finally {
-      setLoading(false);
+    // Asegurarse de que la campaña sea un número
+    const campaignNumber = Number(filters.campania);
+    if (isNaN(campaignNumber) || campaignNumber === 0) {
+      alert("Por favor, ingrese una campaña válida.");
+      return;
     }
+    await fetchStockActualDetalle({ ...filters, campania: campaignNumber });
   };
 
   return (
     <div className="p-4 space-y-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800">📦 Stock Actual</h1>
+      <h1 className="text-2xl font-bold text-gray-800">📊 Stock Actual Detalle</h1>
 
       {/* Tarjeta de Filtros Plegable */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -59,7 +49,7 @@ export default function StockActualPage() {
 
         {mostrarFiltros && (
           <div className="p-4 transition-all duration-300 ease-in-out">
-            <FiltrosStock
+            <FiltrosStockDetalle
               filters={filters}
               onChange={setFilters}
               onSubmit={handleSubmit}
@@ -71,7 +61,7 @@ export default function StockActualPage() {
       
       {/* Tarjeta de Resultados */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <ResultadoStock data={stockData} loading={loading} />
+        <ResultadoStockDetalle data={data} loading={loading} />
       </div>
     </div>
   );

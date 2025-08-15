@@ -15,6 +15,17 @@ export interface BusquedaCataRequest {
   nroCata: number;
 }
 
+export interface DetalleItem {
+  nombreGradoMarca: string;
+  campania: number;
+  nroCATA: number;
+  boletaDGI: string;
+  nroBulto: number;
+  deposito: string;
+  galpon: string;
+  estiba: string;
+}
+
 export async function fetchStock(filtros: FiltrosStock) {
   console.log("🟡 Ejecutando búsqueda con filtros:", filtros);
 
@@ -78,4 +89,48 @@ export async function fetchDetalleStock(idGrado: number) {
   }
 
   return await response.json();
+}
+
+export interface StockActualDetalleRequest {
+  campania: number;
+  nombreGrado?: string;
+}
+
+export interface StockActualDetalleItem {
+  grado: string;
+  nroBulto: number;
+  nroCATA: number;
+  fyhGrabacion: string;
+  campania: number;
+  kgsNeto: number;
+  tara: number;
+  propietario: string;
+  boletaDGI: string;
+  galpon: number;
+}
+
+export async function getStockActualDetalle(
+  filtros: StockActualDetalleRequest
+): Promise<StockActualDetalleItem[]> {
+  console.log("🟡 Ejecutando búsqueda de Stock Actual Detalle con filtros:", filtros);
+
+  try {
+    const response = await fetch("/StockLogistica/api/stock/stockactual", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(filtros),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al consultar el stock actual detalle.");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("🔴 Error en getStockActualDetalle:", error);
+    throw error;
+  }
 }
